@@ -1,0 +1,35 @@
+---
+- name: Deploy Portfolio
+  hosts: webservers
+  become: yes
+
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start and Enable Apache
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Deploy portfolio files
+      copy:
+        src: portfolio/
+        dest: /var/www/html/
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
